@@ -1,0 +1,22 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8">
+<title>{% block title %}Page title{% endblock %}</title>
+<link rel="stylesheet" href="/s/main.css"/>
+{% block headers %}{% endblock %}
+</head>
+<body>
+<div id=header>
+{% block login %}
+{% if user %}Welcome {{ user.name|default:"User" }} | <a href="/logout">Logout<a> |{% else %}
+Please <a href="/login">login</a>  |{% endif %}
+{% endblock %}<a href="/about">About</a>
+</div>
+<div id=content>
+{% block content %}
+   Content here
+{% endblock %}
+</div>
+</body>
+</html>

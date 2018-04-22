@@ -1,0 +1,7 @@
+-sname blog_simple
+
+# Enable kernel polling.
++K true
+
+# Increase the process limit to 2 million processes.
++P 2000000

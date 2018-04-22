@@ -1,0 +1,9 @@
+body, html { border:0; margin:0;padding:0}
+body {color:white; background-color:black}
+#header {text-align:right;margin-right:1em;padding-top:0.3em; }
+#content {padding-left:1em; min-height:60em}
+#login_field {width:30%em;margin-left:35%;margin-right:35%;margin-top:4em;}
+#login_field table {width:100%;}
+#login_field table td input:not([type=submit]) {width:80%;}
+#login_field table th {text-align:right;}
+#error_message {text-align:right; color:red;}

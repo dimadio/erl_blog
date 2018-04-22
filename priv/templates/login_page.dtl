@@ -1,0 +1,21 @@
+{% extends "base_page.dtl" %}
+
+{% block title %}Blog login{% endblock %}
+
+{% block login %}{% endblock %}
+{% block content %}
+
+  <form method="POST">
+	<fieldset id=login_field>
+	  <legend>Login:</legend>
+	  {% if error_message %}
+	  <div id=error_message>{{error_message}}</div>
+	  {% endif %}	  
+	  <table>
+		<tr><th><label for="login">Email</label></th><td><input name="email" id="login" /></td></tr>
+		<tr><th><label for="passwd">Password</label></th><td><input name="password" id="passwd" /></td></tr>
+		<tr><td colspan=2 align="right"><input type="submit" value="Login"></td></tr>
+		</table>
+	</fieldset>
+  </form>
+{% endblock %}
