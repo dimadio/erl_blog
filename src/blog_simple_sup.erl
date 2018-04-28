@@ -31,7 +31,8 @@ init([]) ->
     {ok, { {one_for_all, 0, 1}, 
 		   [
 			child(session_mgr, blog_session_mgr),
-			child(user_mgr, blog_user_mgr)
+			child(user_mgr, blog_user_mgr),
+		        child(blog_mgr, blog_blog_mgr)
 		   ]} }.
 
 %%====================================================================

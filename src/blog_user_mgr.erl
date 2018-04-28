@@ -65,11 +65,11 @@ login_user(Login, Password)->
 
 
 -spec change_user_password(Login, OldPass, NewPass)-> 
-								  ok|{error, Reason} 
-									  when Login::binary(),
-										   OldPass::binary(),
-										   NewPass::binary(),
-										   Reason::term().
+				  ok|{error, Reason} 
+				      when Login::binary(),
+					   OldPass::binary(),
+					   NewPass::binary(),
+					   Reason::term().
 change_user_password(Login, OldPass, NewPass)->
 	gen_server:call(?SERVER, {change_user_password,Login, OldPass, NewPass}).
 
@@ -160,23 +160,23 @@ handle_call({create_user,Login}, _From, State = #state{initial_ts = InitialTs}) 
 
 handle_call({login_user, Login, Password}, _From, State)->
 	Reply = 
-		case mnesia:dirty_index_read(user, Login, #user.login) of
-			[]->
-				{error, not_found};
-			[#user{user_id=UserID,
-				   login=Login, 
-				   password_hash=PasswordHash, 
-				   password_salt=PasswordSalt,
-				   user_data = UserData}]->
-				
-				case hash(Password, PasswordSalt) of
-					PasswordHash ->
-						{ok, maps:merge(#{login => Login, user_id => UserID},UserData) };
-					_ ->
-						{error, wrong_password}
-				end
-		end,
-	{reply, Reply, State};
+	case mnesia:dirty_index_read(user, Login, #user.login) of
+	    []->
+		{error, not_found};
+	    [#user{user_id=UserID,
+		   login=Login, 
+		   password_hash=PasswordHash, 
+		   password_salt=PasswordSalt,
+		   user_data = UserData}]->
+
+		case hash(Password, PasswordSalt) of
+		    PasswordHash ->
+			{ok, maps:merge(#{login => Login, user_id => UserID},UserData) };
+		    _ ->
+			{error, wrong_password}
+		end
+	end,
+    {reply, Reply, State};
 	
 handle_call(_Request, _From, State) ->
 	Reply = {error, not_implemented},

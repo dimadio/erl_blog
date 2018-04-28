@@ -1,0 +1,35 @@
+{% extends "base_page.dtl" %}
+
+{% block title %}Blogs list{% endblock %}
+{% block headers %}
+<style>
+	ul li .content {position:  relative; border-bottom: silver 1px solid;margin-bottom: 0.5em;
+	      max-width: max-content;
+	      padding-right: 7em; }
+	ul li h3 {text-decoration: underline; margin: 0 0 0 0;}
+	ul li h4 {margin: 0 0 0 0;}
+	ul li h5 {margin: 0 0 0 0;}
+	ul li .menu {max-width: max-content;margin-top:0.5em; margin-bottom:0.5em;}
+	ul li .menu form {display: inline; }
+
+</style>
+{% endblock %}
+{% block content %}
+
+  <h2>Blogs list</h2>
+  <ul>
+  {% for blog in blogs %}
+     <li><div class="content"><h3>{{blog.blog_name}}:</h3>
+	<h4>{{blog.title}}</h4><h5>{{blog.subtitle}}</h5>
+	<div class="menu"><!-- a href="#">Edit</a>&nbsp;<a href="#">Delete</a -->
+	     <form action="/blog/{{blog.blog_id}}:edit" method="get"><input type="submit" value="edit"/></form>&nbsp;
+	     <form action="/blog/{{blog.blog_id}}:delete" method="post"><input type="submit" value="delete"/></form>
+	</div></div>
+     </li>
+  {% endfor %}
+  </ul>
+  <hr>
+  <form method=post action="/blogs/add" >
+  <label for="blog_name">Blog name:</label><input type=text id="blog_name" name="blog_name"/><input type=submit value="Add blog"/>
+  </form>
+{% endblock %}

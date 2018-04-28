@@ -29,14 +29,24 @@ init(Req0 = #{method := <<"POST">>}, State) ->
 
 	case validate_login(Body) of
 		ok ->
-			{ok, User} = get_user(Body),
-			Req2 = blog_mid_session:update_session(#{user=>User}, Req1),
-			Resp = cowboy_req:reply(302,
-								   #{<<"content-type">> => <<"text/plain">>,
-									 <<"location">> => <<"/">>},
-								   <<>>,
-								   Req2),
-			{ok, Resp, State};
+		   case get_user(Body) of
+			{ok, User} ->
+			     Req2 = blog_mid_session:update_session(#{user=>User}, Req1),
+			     Resp = cowboy_req:reply(302,
+				   #{<<"content-type">> => <<"text/plain">>,
+				     <<"location">> => <<"/">>},
+				   <<>>,
+				  Req2),
+			     {ok, Resp, State};
+			{error, Reason} ->
+			     Req2 = blog_mid_session:update_session(#{error_message=>Reason}, Req1),
+			     Resp = cowboy_req:reply(302,
+						   #{<<"content-type">> => <<"text/plain">>,
+						     <<"location">> => <<"/login">>},
+						   <<>>,
+						   Req2),
+			     {ok, Resp, State}
+			end;
 		Err ->
 			Req2 = blog_mid_session:update_session(#{error_message=>Err}, Req1),
 			Resp = cowboy_req:reply(302,
