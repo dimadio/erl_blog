@@ -39,7 +39,7 @@ init(Req0 = #{method := <<"POST">>}, State=[add]) ->
     BlogName = maps:get(<<"blog_name">>, Body),
 
     case blog_blog_mgr:add_blog(UserId, BlogName) of
-	{ok, BlogId} ->
+	{ok, _BlogId} ->
 	    Resp = cowboy_req:reply(302,
 				    #{<<"content-type">> => <<"text/plain">>,
 				     <<"location">> => <<"/blogs">>},
@@ -88,15 +88,45 @@ init(Req0 = #{method := <<"POST">>}, State=[action]) ->
 
 
 prepare_action(Req0, UserId, BlogId, <<"edit">>)->
+    SessionData = maps:get(session,  Req0),
+
     {ok, Blog}  = blog_blog_mgr:get_blog_by_id(UserId, BlogId),
-    HTML = io_lib:format("<pre>~p</pre>", [Blog]),
+    {ok, HTML} = blogs_edit:render(SessionData#{blog=>Blog}),
+
+    %% HTML = io_lib:format("<pre>~p</pre>", [Blog]),
     Req1 = blog_mid_session:update_session(#{error_message=><<>>}, Req0),
 
     cowboy_req:reply(200,
 			   #{<<"content-type">> => <<"text/html">>},
 			   HTML, Req1).
-    
-    
+
+perform_action(Req, UserId, BlogId, <<"edit">>) ->
+    {ok, BodyList, Req1} = cowboy_req:read_urlencoded_body(Req),
+    Body = maps:from_list(BodyList),
+    BlogName = maps:get(<<"blog_name">>, Body),
+    BlogTitle = maps:get(<<"blog_title">>, Body),
+    BlogSubtitle = maps:get(<<"blog_subtitle">>, Body),
+    BlogMap = #{blog_id => BlogId, 
+		blog_name => BlogName, 
+		user_id => UserId, 
+		title => BlogTitle, 
+		subtitle =>BlogSubtitle },
+    blog_blog_mgr:update_blog(BlogMap),
+    cowboy_req:reply(302,
+		     #{<<"content-type">> => <<"text/plain">>,
+		       <<"location">> => <<"/blogs">>},
+		     <<>>,
+		     Req1);
+
+
+perform_action(Req, UserId, BlogId, <<"delete">>) ->
+    blog_blog_mgr:delete_blog(UserId, BlogId),
+    cowboy_req:reply(302,
+		     #{<<"content-type">> => <<"text/plain">>,
+		       <<"location">> => <<"/blogs">>},
+		     <<>>,
+		     Req);
+
 perform_action(Req, _UserId, _BlogId, _Action) ->
     Resp = cowboy_req:reply(302,
 				    #{<<"content-type">> => <<"text/plain">>,

@@ -19,7 +19,7 @@
   <h2>Blogs list</h2>
   <ul>
   {% for blog in blogs %}
-     <li><div class="content"><h3>{{blog.blog_name}}:</h3>
+     <li><div class="content"><h3><a href="/@{{blog.blog_name}}">{{blog.blog_name}}</a>:</h3>
 	<h4>{{blog.title}}</h4><h5>{{blog.subtitle}}</h5>
 	<div class="menu"><!-- a href="#">Edit</a>&nbsp;<a href="#">Delete</a -->
 	     <form action="/blog/{{blog.blog_id}}:edit" method="get"><input type="submit" value="edit"/></form>&nbsp;

@@ -32,6 +32,7 @@ build_dispatch()->
 										       {"/blogs[/]", blogs_manager, [list]},
 										       {"/blogs/add[/]", blogs_manager, [add]},
 										       {"/blog/:blog_action", blogs_manager, [action]},
+										       {"/:blog_name", [{blog_name, fun blog_name_filter/2}],blog_read, []},
 										       {"/", root_handler, []}]}
 			  ]).
 
@@ -68,3 +69,17 @@ stop(_State) ->
 %%====================================================================
 %% Internal functions
 %%====================================================================
+blog_name_filter(forward, << "@", BlogName/binary>> )->
+    {ok, BlogName};
+blog_name_filter(forward,_) -> {error, no_blog_name};
+
+blog_name_filter(reverse, Value = << "@", BlogName/binary>> ) -> {ok, Value};
+blog_name_filter(reverse, Value ) -> {ok, << "@", Value/binary>>};
+
+blog_name_filter(format_error, {no_blog_name, Value} ) ->
+    io_lib:format("The value ~p is not a blog name.", [Value]);
+blog_name_filter(Command, Value) ->
+    lager:info("blog_name_filter called with ~p: ~p", [Command, Value]),
+    {error, not_found}.
+    
+

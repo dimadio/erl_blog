@@ -18,7 +18,7 @@
 		 terminate/2, code_change/3]).
 
 
--export([get_user_blogs/1, get_blog_by_id/2,get_blog_by_name/2,add_blog/2, update_blog/1]).
+-export([get_user_blogs/1, get_blog_by_id/2,get_blog_by_name/2,add_blog/2, update_blog/1, delete_blog/2]).
 -define(SERVER, ?MODULE).
 
 -record(state, {initial_ts::integer()}).
@@ -51,13 +51,17 @@ get_blog_by_id(UserId, BlogId)->
 get_blog_by_name(UserId, BlogName)->
     gen_server:call(?SERVER, {get_blog_by_name, UserId, BlogName}).
 
--spec add_blog(UserId::integer(), BlogName::binary())->BlogId::integer().
+-spec add_blog(UserId::integer(), BlogName::binary())->{ok, BlogId::integer() }|{error, term()}.
 add_blog(UserId, BlogName)->
     gen_server:call(?SERVER, {add_blog, UserId, BlogName}).
 
 -spec update_blog(Blog::map())->ok|{error, term()}.
 update_blog(Blog)->
     gen_server:call(?SERVER, {update_blog, Blog}).
+
+-spec delete_blog(UserId::integer(), BlogId::integer())-> ok|{error, term()}.
+delete_blog(UserId, BlogId)->
+    gen_server:call(?SERVER, {delete_blog, UserId, BlogId}).
 
 
 %%--------------------------------------------------------------------
@@ -91,9 +95,18 @@ handle_call({get_user_blogs, UserId}, _From, State)->
     BlogsMaps = lists:map(fun blog_rec_to_map/1,BlogsRecords),
     {reply, BlogsMaps, State};
 
+handle_call({update_blog, BlogMap}, _From, State)->
+    BlogRec = blog_map_to_rec(BlogMap),
+    Reply = mnesia:activity(
+	      transaction, 
+	      fun()-> mnesia:write(BlogRec) end ),
+    {reply, Reply, State};
+
+
 handle_call({add_blog, UserId, BlogName}, _From, State = #state{initial_ts = InitialTs})->
     lager:info("Add blog for ~p: ~p", [UserId, BlogName]),
-    Reply = mnesia:activity(
+    Reply = try 
+		mnesia:activity(
 	      transaction, 
 	      fun()->
 		      case mnesia:match_object({blog, '_', BlogName, UserId, '_', '_'})  of
@@ -110,9 +123,14 @@ handle_call({add_blog, UserId, BlogName}, _From, State = #state{initial_ts = Ini
 			      {ok, {ok, BlogId}};
 			  Found ->
 			      lager:info("Found records : ~p", [Found]),
-			      mnesia:abort(blog_exists)
+			      mnesia:abort( blog_exists)
 		      end 
-	      end),
+	      end)
+	    catch 
+		CLASS:ERROR ->
+		lager:info("delete Failed as ~p:~p", [CLASS, ERROR]),
+		{error, blog_exists}
+	    end,
     {reply, Reply, State};
 
 handle_call({get_blog_by_id, UserId, BlogId}, _From, State)->
@@ -125,6 +143,24 @@ handle_call({get_blog_by_id, UserId, BlogId}, _From, State)->
 	end,
     {reply, Reply, State};
 
+handle_call({delete_blog, UserId, BlogId}, _From, State)->
+    Reply = 
+	try mnesia:activity(
+	      transaction, 
+	      fun()->
+		      case mnesia:match_object({blog, BlogId, '_', UserId, '_', '_'})  of
+			  [Blog] ->
+			      mnesia:delete_object(Blog);
+			  _ ->
+			      mnesia:abort(not_found)
+		      end
+	      end)
+	catch 
+	    CLASS:ERROR -> 
+		lager:info("delete Failed as ~p:~p", [CLASS, ERROR]),
+		{error, not_found}
+	end,
+    {reply, Reply, State};
 
 handle_call(_Request, _From, State) ->
 	Reply = {error, not_implemented},
@@ -149,4 +185,9 @@ code_change(_OldVsn, State, _Extra) ->
 %% INTERNAL
 blog_rec_to_map(#blog{blog_id=BlogId, blog_name=BlogName, user_id=UserId, title=Title, subtitle=SubTitle})->
     #{blog_id=>BlogId, blog_name=>BlogName, user_id=>UserId, title=>Title, subtitle=>SubTitle}.
-    
+
+
+
+blog_map_to_rec(#{blog_id:=BlogId, blog_name:=BlogName, 
+		  user_id:=UserId, title:=Title, subtitle:=SubTitle}) ->
+    #blog{blog_id=BlogId, blog_name=BlogName, user_id=UserId, title=Title, subtitle=SubTitle}.

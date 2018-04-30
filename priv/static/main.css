@@ -1,9 +1,16 @@
-body, html { border:0; margin:0;padding:0}
+body, html { border:0; margin:0;padding:0; font-family: sans-serif; font-size:14pt;}
 body {color:white; background-color:black}
 #header {text-align:right;margin-right:1em;padding-top:0.3em; }
+img.login_img {width:32px; }
+span.menu {cursor: pointer;}
+div#user_menu_popup {display:none;visible:none}
 #content {padding-left:1em; min-height:60em}
+#edit_field  {width:30%em;margin-left:35%;margin-right:35%;margin-top:4em;}
 #login_field {width:30%em;margin-left:35%;margin-right:35%;margin-top:4em;}
 #login_field table {width:100%;}
+#edit_field table {width:100%;}
 #login_field table td input:not([type=submit]) {width:80%;}
+#edit_field table td input:not([type=submit]) {width:80%;}
 #login_field table th {text-align:right;}
+#edit_field table th {text-align:right;}
 #error_message {text-align:right; color:red;}

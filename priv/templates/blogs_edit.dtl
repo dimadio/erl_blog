@@ -1,0 +1,21 @@
+{% extends "base_page.dtl" %}
+
+{% block title %}Blog edit{% endblock %}
+
+{% block content %}
+
+  <h2>Edit blog info for {{blog.blog_name}}</h2>
+  <form method="post">
+  <input type=hidden name="blog_name" value="{{blog.blog_name}}" />
+  <fieldset id=edit_field>
+	  <legend>Edit blog <i>{{blog.blog_name}}</i>:</legend>	  
+  <table >
+  <tr><th><label for="blog_title">Blog title</label></th>
+  <td><input name="blog_title" id="blog_title" value="{{blog.title}}" /></td></tr>
+  <tr><th><label for="blog_subtitle">Blog subtitle</label></th>
+  <td><input name="blog_subtitle" id="blog_subtitle" value="{{blog.subtitle}}" /></td></tr>
+  <tr><td colspan=2 align="right"><input type="submit" value="Update"></td></tr>
+  </table>
+  </fieldset>
+  </form>
+{% endblock %}
