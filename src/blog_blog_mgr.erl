@@ -133,6 +133,20 @@ handle_call({add_blog, UserId, BlogName}, _From, State = #state{initial_ts = Ini
 	    end,
     {reply, Reply, State};
 
+handle_call({get_blog_by_name, UserId, BlogName}, _From, State)->
+    UseUserId = case UserId of
+		    undefined -> '_';
+		    _ -> UserId
+		end,
+    Reply =
+	case mnesia:dirty_match_object({blog, '_', BlogName, UseUserId, '_', '_'})  of
+	    [Blog] ->
+		{ok, blog_rec_to_map(Blog)};
+	    _ ->
+		{error, not_found}
+	end,
+    {reply, Reply, State};
+
 handle_call({get_blog_by_id, UserId, BlogId}, _From, State)->
     Reply = 
 	case mnesia:dirty_match_object({blog, BlogId, '_', UserId, '_', '_'})  of

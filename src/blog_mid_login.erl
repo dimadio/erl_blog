@@ -19,10 +19,12 @@ execute(Req, Env) ->
 	Path = cowboy_req:path(Req),	
 	lager:info("Path: ~p", [Path]),
 	IsPublic = case Path of 
-				   << "/s/", _/binary >> ->
-					   true;
-				   _ -> lists:member(Path, PublicPages)
-			   end,
+		       << "/s/", _/binary >> ->
+			   true;
+		       <<"/@", _/binary >> -> %% blog entries are public
+			   true;
+		       _ -> lists:member(Path, PublicPages)
+		   end,
 	%% lager:info("IsPublic ~p", [IsPublic]),
 	Session = maps:get(session, Req, #{}),
 	lager:info("Session in Req is ~p", [Session]),

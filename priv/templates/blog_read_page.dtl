@@ -1,0 +1,16 @@
+{% extends "base_page.dtl" %}
+
+{% block title %}Blogs list{% endblock %}
+{% block content %}
+{% if blog %}
+<h2>{{blog.blog_name}}:{{blog.title}}</h2>
+<h3>{{blog.subtitle}}</h3>
+Entries
+{% else %}
+   {% if user %}
+   Create a new blog
+   {% else %}
+   Blog not exists
+   {% endif %}
+{% endif %}
+{% endblock %}
