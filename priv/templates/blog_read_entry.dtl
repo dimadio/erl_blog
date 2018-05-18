@@ -1,0 +1,20 @@
+{% extends "base_page.dtl" %}
+
+{% block title %}Blog entry{% endblock %}
+{% block content %}
+
+{% if entry %}
+   <article>
+     <header>{% if blog %}Back to&nbsp;/&nbsp;<a href="/@{{blog.blog_name}}">{{blog.title}}</a>&nbsp;/&nbsp;{% endif %}{{ entry.title }}</header>
+   {% autoescape off %}{{ entry.html_content }}{% endautoescape %}
+   {% if user.user_id == blog.user_id %}
+   <div class="menu">
+	<a class="button" href="/@{{blog.blog_name}}/{{ entry.title }}/edit">Edit</a>&nbsp|&nbsp;
+	<a class="button" href="/@{{blog.blog_name}}/{{ entry.title }}/delete">Delete</a>
+   </div>
+   {% endif %}
+   </article>
+
+{% endif %}
+{% endblock %}
+

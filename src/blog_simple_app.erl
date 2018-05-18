@@ -23,17 +23,18 @@ update_dispatch()->
     cowboy:set_env(http_listener, dispatch,Dispatch).
 
 build_dispatch()->
-    cowboy_router:compile([							
-										{'_', [
-										       {"/s/[...]", cowboy_static, 
-											{priv_dir, blog_simple, "static"}},
-										       {"/login", login_handler, []},
-										       {"/logout", logout_handler, []},
-										       {"/blogs[/]", blogs_manager, [list]},
-										       {"/blogs/add[/]", blogs_manager, [add]},
-										       {"/blog/:blog_action", blogs_manager, [action]},
-										       {"/:blog_name", [{blog_name, fun blog_name_filter/2}],blog_read, []},
-										       {"/", root_handler, []}]}
+    cowboy_router:compile([
+			   {'_', [
+				  {"/s/[...]", cowboy_static, 
+				   {priv_dir, blog_simple, "static"}},
+				  {"/login", login_handler, []},
+				  {"/logout", logout_handler, []},
+				  {"/blogs[/]", blogs_manager, [list]},
+				  {"/blogs/add[/]", blogs_manager, [add]},
+				  {"/blog/:blog_action", blogs_manager, [action]},
+				  {"/:blog_name", [{blog_name, fun blog_name_filter/2}],blog_read, []},
+				  {"/:blog_name/:entry_title", [{blog_name, fun blog_name_filter/2}],blog_entry_read, []},
+				  {"/", root_handler, []}]}
 			  ]).
 
 start(_StartType, _StartArgs) ->
@@ -81,5 +82,3 @@ blog_name_filter(format_error, {no_blog_name, Value} ) ->
 blog_name_filter(Command, Value) ->
     lager:info("blog_name_filter called with ~p: ~p", [Command, Value]),
     {error, not_found}.
-    
-

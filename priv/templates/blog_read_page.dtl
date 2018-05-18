@@ -6,6 +6,26 @@
 <h2>{{blog.blog_name}}:{{blog.title}}</h2>
 <h3>{{blog.subtitle}}</h3>
 Entries
+{% for entry in entries %}
+   <hr/>
+   <article>
+     <header><a href="/@{{blog.blog_name}}/{{ entry.title }}">{{ entry.title }}</a></header>
+   {% autoescape off %}{{ entry.html_content }}{% endautoescape %}
+   </article>
+{% endfor %}
+{% if user.user_id == blog.user_id %}
+   <form method="post" >
+   <fieldset id=post_field class="form">
+   <legend>New post:</legend>
+   <table>
+   <tr><th><label for="title">Title</label></th>
+   <td><input type="text" id="title" name="title"/></td></tr>
+   <tr><td colspan=2><textarea name="content" ></textarea></td></tr>
+   <tr><td colspan=2><input type="submit" value="add"/></td></tr>
+   </table>
+   </fieldset>
+   </form>
+{% endif %}
 {% else %}
    {% if user %}
    Create a new blog

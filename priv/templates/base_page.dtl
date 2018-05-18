@@ -6,21 +6,27 @@
 <link rel="stylesheet" href="/s/main.css"/>
 <link rel="shortcut icon" href="/s/favicon.ico" type="image/x-icon" />
 <script>
+function init(){
 console.log("init");
 var user_menu_popup = document.getElementById("user_menu_popup");
 document.getElementById("user_menu").onclick=function(){
 	console.log("click");
 	user_menu_popup.style="display:block;visible:visible;"
 }
-
+}
 </script>
 {% block headers %}{% endblock %}
 </head>
-<body>
-<div id=header>
+<body onload="init()">
+<div id=header class="menu">
 {% block login %}
-{% if user %}Welcome <span id="user_menu" class="menu">{{ user.name|default:"User" }}<img class="login_img" src="/s/triangle.png"/></span><div id="user_menu_popup">IM THE MENU</div> | <a href="/blogs/">Blogs</a> | <a href="/tools">Tools</a> | <a href="/logout">Logout<a> |{% else %}Please <a href="/login">login</a>  |{% endif %}
-{% endblock %}<a href="/about">About</a>
+{% if user %}
+Welcome <span id="user_menu" class="menu">{{ user.name|default:"User" }}<img class="login_img" src="/s/triangle.png"/></span>
+<div id="user_menu_popup">IM THE MENU</div>&nbsp;|&nbsp;
+<a class="button" href="/blogs/">Blogs</a>&nbsp;|&nbsp;
+<a class="button" href="/tools">Tools</a>&nbsp;|&nbsp;
+<a class="button" href="/logout">Logout<a>&nbsp;|{% else %}Please <a class="button" href="/login">Login</a>&nbsp;|{% endif %}
+{% endblock %}<a class="button" href="/about">About</a>
 </div>
 <div id=content>
 {% block content %}

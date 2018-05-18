@@ -7,7 +7,7 @@
   <h2>Edit blog info for {{blog.blog_name}}</h2>
   <form method="post">
   <input type=hidden name="blog_name" value="{{blog.blog_name}}" />
-  <fieldset id=edit_field>
+  <fieldset id=edit_field class="form">
 	  <legend>Edit blog <i>{{blog.blog_name}}</i>:</legend>	  
   <table >
   <tr><th><label for="blog_title">Blog title</label></th>
