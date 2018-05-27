@@ -9,7 +9,7 @@ Entries
 {% for entry in entries %}
    <hr/>
    <article>
-     <header><a href="/@{{blog.blog_name}}/{{ entry.title }}">{{ entry.title }}</a></header>
+     <header><a href="/@{{blog.blog_name|urlencode}}/{{ entry.title|urlencode }}">{{ entry.title }}</a></header>
    {% autoescape off %}{{ entry.html_content }}{% endautoescape %}
    </article>
 {% endfor %}

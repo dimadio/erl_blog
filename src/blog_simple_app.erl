@@ -33,7 +33,8 @@ build_dispatch()->
 				  {"/blogs/add[/]", blogs_manager, [add]},
 				  {"/blog/:blog_action", blogs_manager, [action]},
 				  {"/:blog_name", [{blog_name, fun blog_name_filter/2}],blog_read, []},
-				  {"/:blog_name/:entry_title", [{blog_name, fun blog_name_filter/2}],blog_entry_read, []},
+				  {"/:blog_name/:entry_title", [{blog_name, fun blog_name_filter/2}],blog_entry_read, [display]},
+				  {"/:blog_name/:entry_title/:action", [{blog_name, fun blog_name_filter/2}],blog_entry_read, [action]},
 				  {"/", root_handler, []}]}
 			  ]).
 

@@ -2,7 +2,7 @@
 
 {% block title %}Blogs list{% endblock %}
 {% block headers %}
-<style>
+<!-- style>
 	ul li .content {position:  relative; border-bottom: silver 1px solid;margin-bottom: 0.5em;
 	      max-width: max-content;
 	      padding-right: 7em; }
@@ -12,24 +12,29 @@
 	ul li .menu {max-width: max-content;margin-top:0.5em; margin-bottom:0.5em;}
 	ul li .menu form {display: inline; }
 
-</style>
+</style -->
 {% endblock %}
 {% block content %}
 
   <h2>Blogs list</h2>
-  <ul>
+  <ul class="nav">
   {% for blog in blogs %}
-     <li><div class="content"><h3><a href="/@{{blog.blog_name}}">{{blog.blog_name}}</a>:</h3>
-	<h4>{{blog.title}}</h4><h5>{{blog.subtitle}}</h5>
-	<div class="menu"><!-- a href="#">Edit</a>&nbsp;<a href="#">Delete</a -->
-	     <form action="/blog/{{blog.blog_id}}:edit" method="get"><input type="submit" value="edit"/></form>&nbsp;
-	     <form action="/blog/{{blog.blog_id}}:delete" method="post"><input type="submit" value="delete"/></form>
+     <li class="nav-item"><div class="content"><a class="nav-link active" href="/@{{blog.blog_name}}"><h3>{{blog.blog_name}}</h3>
+	<h4>{{blog.title}}</h4><h5>{{blog.subtitle}}</h5></a>
+	<div class="btn-group" role="group" aria-label="Blog actions">
+	     <form action="/blog/{{blog.blog_id}}:edit" method="get">
+	     	   <input type="submit" type="button" role="button" class="btn btn-secondary" value="edit"/></form>&nbsp;
+	     <form action="/blog/{{blog.blog_id}}:delete" method="post">
+	     	   <input type="submit" type="button" role="button" class="btn btn-secondary" value="delete"/></form>
 	</div></div>
      </li>
   {% endfor %}
   </ul>
   <hr>
-  <form method=post action="/blogs/add" >
-  <label for="blog_name">Blog name:</label><input type=text id="blog_name" name="blog_name"/><input type=submit value="Add blog"/>
+  <form method=post action="/blogs/add" class="form-inline" >
+  <div class="form-group mx-sm-3 mb-2">
+  <label for="blog_name">Blog name:</label><input class="form-control" type=text id="blog_name" name="blog_name"/>
+  </div>
+  <input type=submit type="button" role="button" class="btn btn-secondary" value="Add blog"/>
   </form>
 {% endblock %}
